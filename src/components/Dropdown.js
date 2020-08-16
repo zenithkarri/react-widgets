@@ -1,18 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const Dropdown = ({ options, selected, onSelectedChange }) => {
+const Dropdown = ({ label, options, selected, onSelectedChange }) => {
     const [open, setOpen ] = useState(false);
     const ref = useRef();
 
     useEffect(() => {
-        document.body.addEventListener('click', (e) => {
+        const onBodyClick = (e) => {
             //This will check if the element that was clicked on is inside of our dropdown component (JSX)
-            if (ref.current.contains(e.target)){
+            if (ref.current.contains(e.target)) {
                 return;
             }
-            console.log(e.target);
+            // console.log(e.target);
             setOpen(false);
-        });
+        }
+        
+        document.body.addEventListener('click', onBodyClick);
+
+        return () => {
+            document.body.removeEventListener('click', onBodyClick);
+        }
     }, []);
     
 
@@ -28,29 +34,32 @@ const Dropdown = ({ options, selected, onSelectedChange }) => {
         );
     });
     
-    console.log(ref.current);
+    // console.log(ref.current);
 
     return (
-        <div ref={ref} className="ui form">
-            <div className="field">
-                <label className="label">
-                    Select a Colour
-                </label>
-                <div 
-                onClick={() => setOpen(!open)}
-                className={`ui selection dropdown ${open ? 'visible active' : ''}`}
-                >
-                    <i className="dropdown icon"></i>
-                    <div className="text">{selected.label}</div>
+        <div>
+            <div ref={ref} className="ui form">
+                <div className="field">
+                    <label className="label">
+                        {label}
+                    </label>
                     <div 
-                    
-                    className={`menu ${open ? 'visible transition' : ''}`}
+                    onClick={() => setOpen(!open)}
+                    className={`ui selection dropdown ${open ? 'visible active' : ''}`}
                     >
-                        {renderedOptions}
+                        <i className="dropdown icon"></i>
+                        <div className="text">{selected.label}</div>
+                        <div 
+                        
+                        className={`menu ${open ? 'visible transition' : ''}`}
+                        >
+                            {renderedOptions}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        
     );
 }
 
